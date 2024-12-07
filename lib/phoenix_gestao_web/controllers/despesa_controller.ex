@@ -4,11 +4,6 @@ defmodule PhoenixGestaoWeb.DespesaController do
   alias PhoenixGestao.Despesas
   alias PhoenixGestao.Despesas.Despesa
 
-  def index(conn, _params) do
-    despesas = Despesas.list_despesas()
-    render(conn, :index, despesas: despesas)
-  end
-
   def new(conn, _params) do
     changeset = Despesas.change_despesa(%Despesa{})
     render(conn, :new, changeset: changeset)
@@ -59,4 +54,32 @@ defmodule PhoenixGestaoWeb.DespesaController do
     |> put_flash(:info, "Despesa deleted successfully.")
     |> redirect(to: ~p"/despesas")
   end
+
+  def index(conn, %{"type" => "maiores"}) do
+  despesas = Despesas.list_largest_expenses(:desc)
+  render(conn, :index, despesas: despesas)
+end
+
+def index(conn, %{"type" => "menores"}) do
+  despesas = Despesas.list_smallest_expenses(:asc)
+  render(conn, :index, despesas: despesas)
+end
+
+def index(conn, %{"month" => month}) when month != "" do
+  month_number = String.to_integer(month)
+  despesas = Despesas.list_expenses_by_month(month_number)
+  render(conn, :index, despesas: despesas)
+end
+
+def index(conn, %{"start_date" => start_date, "end_date" => end_date}) do
+  despesas = Despesas.list_expenses_by_period(start_date, end_date)
+  render(conn, :index, despesas: despesas)
+end
+
+def index(conn, _params) do
+  despesas = Despesas.list_despesas()
+  render(conn, :index, despesas: despesas)
+end
+
+
 end

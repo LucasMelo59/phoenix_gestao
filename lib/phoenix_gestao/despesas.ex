@@ -1,11 +1,11 @@
 defmodule PhoenixGestao.Despesas do
+  import Ecto.Query, only: [from: 2, order_by: 2, limit: 2, fragment: 2]
+
   @moduledoc """
   The Despesas context.
   """
 
-  import Ecto.Query, warn: false
   alias PhoenixGestao.Repo
-
   alias PhoenixGestao.Despesas.Despesa
 
   @doc """
@@ -101,4 +101,41 @@ defmodule PhoenixGestao.Despesas do
   def change_despesa(%Despesa{} = despesa, attrs \\ %{}) do
     Despesa.changeset(despesa, attrs)
   end
+
+   def list_expenses_by_month(month) do
+    month = if is_binary(month), do: String.to_integer(month), else: month
+
+    from(e in Despesa,
+      where: fragment("EXTRACT(MONTH FROM ?)", e.date) == ^month
+    )
+    |> Repo.all()
+  end
+
+  # Função para listar despesas por período
+  def list_expenses_by_period(start_date, end_date) do
+    from(e in Despesa,
+      where: e.date >= ^start_date and e.date <= ^end_date
+    )
+    |> Repo.all()
+  end
+
+  # Listar as maiores despesas
+def list_largest_expenses(:desc) do
+  from(e in Despesa,
+    order_by: [desc: e.valor],
+    limit: 10
+  )
+  |> Repo.all()
+end
+
+# Listar as menores despesas
+def list_smallest_expenses(:asc) do
+  from(e in Despesa,
+    order_by: [asc: e.valor],
+    limit: 10
+  )
+  |> Repo.all()
+end
+
+
 end
