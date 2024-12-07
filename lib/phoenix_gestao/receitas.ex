@@ -3,8 +3,8 @@ defmodule PhoenixGestao.Receitas do
   The Receitas context.
   """
 
-  import Ecto.Query, warn: false
-  alias PhoenixGestao.Repo
+import Ecto.Query, only: [from: 2, order_by: 2, limit: 2, fragment: 2]
+alias PhoenixGestao.Repo
 
   alias PhoenixGestao.Receitas.Receita
 
@@ -101,4 +101,39 @@ defmodule PhoenixGestao.Receitas do
   def change_receita(%Receita{} = receita, attrs \\ %{}) do
     Receita.changeset(receita, attrs)
   end
+
+  def list_mes(month) do
+    month = if is_binary(month), do: String.to_integer(month), else: month
+
+    from(e in Receita,
+      where: fragment("EXTRACT(MONTH FROM ?)", e.date) == ^month
+    )
+    |> Repo.all()
+  end
+
+  # Função para listar despesas por período
+  def list_period(start_date, end_date) do
+    from(e in Receita,
+      where: e.data >= ^start_date and e.data <= ^end_date
+    )
+    |> Repo.all()
+  end
+
+  # Listar as maiores receitas
+def list_maior(:desc) do
+  from(e in Receita,
+    order_by: [desc: e.valor],
+    limit: 10
+  )
+  |> Repo.all()
+end
+
+# Listar as menores receitas
+def list_menor(:asc) do
+  from(e in Receita,
+    order_by: [asc: e.valor],
+    limit: 10
+  )
+  |> Repo.all()
+end
 end

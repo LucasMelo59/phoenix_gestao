@@ -56,23 +56,23 @@ defmodule PhoenixGestaoWeb.DespesaController do
   end
 
   def index(conn, %{"type" => "maiores"}) do
-  despesas = Despesas.list_largest_expenses(:desc)
+  despesas = Despesas.list_maior(:desc)
   render(conn, :index, despesas: despesas)
 end
 
 def index(conn, %{"type" => "menores"}) do
-  despesas = Despesas.list_smallest_expenses(:asc)
+  despesas = Despesas.list_menor(:asc)
   render(conn, :index, despesas: despesas)
 end
 
 def index(conn, %{"month" => month}) when month != "" do
   month_number = String.to_integer(month)
-  despesas = Despesas.list_expenses_by_month(month_number)
+  despesas = Despesas.list_mes(month_number)
   render(conn, :index, despesas: despesas)
 end
 
 def index(conn, %{"start_date" => start_date, "end_date" => end_date}) do
-  despesas = Despesas.list_expenses_by_period(start_date, end_date)
+  despesas = Despesas.list_period(start_date, end_date)
   render(conn, :index, despesas: despesas)
 end
 

@@ -102,25 +102,25 @@ defmodule PhoenixGestao.Despesas do
     Despesa.changeset(despesa, attrs)
   end
 
-   def list_expenses_by_month(month) do
+   def list_mes(month) do
     month = if is_binary(month), do: String.to_integer(month), else: month
 
     from(e in Despesa,
-      where: fragment("EXTRACT(MONTH FROM ?)", e.date) == ^month
+      where: fragment("EXTRACT(MONTH FROM ?)", e.data) == ^month
     )
     |> Repo.all()
   end
 
   # Função para listar despesas por período
-  def list_expenses_by_period(start_date, end_date) do
+  def list_period(start_date, end_date) do
     from(e in Despesa,
-      where: e.date >= ^start_date and e.date <= ^end_date
+      where: e.data >= ^start_date and e.data <= ^end_date
     )
     |> Repo.all()
   end
 
   # Listar as maiores despesas
-def list_largest_expenses(:desc) do
+def list_maior(:desc) do
   from(e in Despesa,
     order_by: [desc: e.valor],
     limit: 10
@@ -129,7 +129,7 @@ def list_largest_expenses(:desc) do
 end
 
 # Listar as menores despesas
-def list_smallest_expenses(:asc) do
+def list_menor(:asc) do
   from(e in Despesa,
     order_by: [asc: e.valor],
     limit: 10

@@ -7,9 +7,62 @@
   </:actions>
 </.header>
 
+<div class="filters">
+  <form method="get" action={~p"/receitas"} class="filter-form">
+    <!-- Filtro por mês -->
+    <div class="filter-group">
+      <label for="month" class="filter-label">
+        <i class="icon-calendar"></i> Filtrar por mês:
+      </label>
+      <select name="month" id="month" class="filter-select">
+        <option value="">Todos os meses</option>
+        <%= for {month_name, month_number} <- Enum.with_index(~w(January February March April May June July August September October November December), 1) do %>
+          <option value={month_number} selected={@conn.params["month"] == "#{month_number}"}><%= month_name %></option>
+        <% end %>
+      </select>
+    </div>
+
+    <!-- Filtro por tipo (maiores/menores valores) -->
+    <div class="filter-group">
+      <span class="filter-label"><i class="icon-sort"></i> Ordenar por valor:</span>
+      <div class="filter-options">
+        <label class="filter-option">
+          <input type="radio" id="largest" name="type" value="maiores" checked={@conn.params["type"] == "maiores"} />
+          Maior valor
+        </label>
+        <label class="filter-option">
+          <input type="radio" id="smallest" name="type" value="menores" checked={@conn.params["type"] == "menores"} />
+          Menor valor
+        </label>
+      </div>
+    </div>
+    <div>
+      <label for="start_date">Data Início:</label>
+      <input type="date" name="start_date" id="start_date">
+
+      <label for="end_date">Data Fim:</label>
+      <input type="date" name="end_date" id="end_date">
+    </div>
+    <!-- Botão de envio -->
+    <div class="filter-group">
+      <button type="submit" class="button apply-filters">
+        <i class="icon-filter"></i> Aplicar Filtros
+      </button>
+    </div>
+  </form>
+</div>
+
+
 <.table id="receitas" rows={@receitas} row_click={&JS.navigate(~p"/receitas/#{&1}")}>
-  <:col :let={receita} label="Descricao"><%= receita.descricao %></:col>
-  <:col :let={receita} label="Valor"><%= receita.valor %></:col>
+  <:col :let={receita} label="Descrição">
+    <%= receita.descricao %>
+  </:col>
+  <:col :let={receita} label="Valor">
+    <%= receita.valor %>
+  </:col>
+  <:col :let={receita} label="Data">
+    <%= receita.data |> Timex.format!("{0D}/{0M}/{YYYY}") %>
+  </:col>
   <:action :let={receita}>
     <div class="sr-only">
       <.link navigate={~p"/receitas/#{receita}"}>Show</.link>
@@ -22,3 +75,4 @@
     </.link>
   </:action>
 </.table>
+

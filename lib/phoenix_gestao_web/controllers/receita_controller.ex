@@ -4,10 +4,6 @@ defmodule PhoenixGestaoWeb.ReceitaController do
   alias PhoenixGestao.Receitas
   alias PhoenixGestao.Receitas.Receita
 
-  def index(conn, _params) do
-    receitas = Receitas.list_receitas()
-    render(conn, :index, receitas: receitas)
-  end
 
   def new(conn, _params) do
     changeset = Receitas.change_receita(%Receita{})
@@ -58,5 +54,31 @@ defmodule PhoenixGestaoWeb.ReceitaController do
     conn
     |> put_flash(:info, "Receita deleted successfully.")
     |> redirect(to: ~p"/receitas")
+  end
+
+  def index(conn, %{"type" => "maiores"}) do
+    receita = Receitas.list_maior(:desc)
+    render(conn, :index, receitas: receita)
+  end
+
+  def index(conn, %{"type" => "menores"}) do
+    receita = Receitas.list_menor(:asc)
+    render(conn, :index, receitas: receita)
+  end
+
+  def index(conn, %{"month" => month}) when month != "" do
+    month_number = String.to_integer(month)
+    receita = Receitas.list_mes(month_number)
+    render(conn, :index, receitas: receita)
+  end
+
+  def index(conn, %{"start_date" => start_date, "end_date" => end_date}) do
+    receita = Receitas.list_period(start_date, end_date)
+    render(conn, :index, receitas: receita)
+  end
+
+  def index(conn, _params) do
+    receita = Receitas.list_receitas()
+    render(conn, :index, receitas: receita)
   end
 end

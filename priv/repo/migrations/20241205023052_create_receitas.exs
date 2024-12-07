@@ -5,8 +5,9 @@ defmodule PhoenixGestao.Repo.Migrations.CreateReceitas do
     create table(:receitas) do
       add :descricao, :string
       add :valor, :decimal
+      add :data, :date
 
-      timestamps(type: :utc_datetime)
+      timestamps()
     end
   end
 end

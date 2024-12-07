@@ -29,6 +29,13 @@
         <label for="smallest">Menor valor</label>
       </div>
     </div>
+     <div>
+      <label for="start_date">Data Início:</label>
+      <input type="date" name="start_date" id="start_date">
+
+      <label for="end_date">Data Fim:</label>
+      <input type="date" name="end_date" id="end_date">
+    </div>
     <button type="submit" class="button">Aplicar filtros</button>
   </.simple_form>
 </div>
@@ -37,6 +44,9 @@
 <.table id="despesas" rows={@despesas} row_click={&JS.navigate(~p"/despesas/#{&1}")}>
   <:col :let={despesa} label="Descricao"><%= despesa.descricao %></:col>
   <:col :let={despesa} label="Valor"><%= despesa.valor %></:col>
+  <:col :let={receita} label="Data">
+    <%= receita.data |> Timex.format!("{0D}/{0M}/{YYYY}") %>
+  </:col>
   <:action :let={despesa}>
     <div class="sr-only">
       <.link navigate={~p"/despesas/#{despesa}"}>Show</.link>

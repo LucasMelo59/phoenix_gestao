@@ -5,8 +5,9 @@ defmodule PhoenixGestao.Repo.Migrations.CreateDespesas do
     create table(:despesas) do
       add :descricao, :string
       add :valor, :decimal
+      add :data, :date
 
-      timestamps(type: :utc_datetime)
+      timestamps()
     end
   end
 end
